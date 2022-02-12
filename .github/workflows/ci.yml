@@ -9,7 +9,7 @@ jobs:
     env:
       DB_DATABASE: sparta
       DB_USER: root
-      DB_PASSWORD: 22380476
+      DB_PASSWORD: 3257
 
     runs-on: ubuntu-latest
     steps:
