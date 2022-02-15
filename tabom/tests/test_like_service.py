@@ -1,9 +1,10 @@
+from django.db import IntegrityError
 from django.test import TestCase
 
+from tabom.models import Like, like
 from tabom.models.article import Article
 from tabom.models.user import User
-from tabom.services.like_service import do_like
-from django.db import IntegrityError
+from tabom.services.like_service import do_like, undo_like
 
 
 class TestLikeService(TestCase):
@@ -22,8 +23,8 @@ class TestLikeService(TestCase):
 
     def test_a_user_can_like_an_article_only_once(self) -> None:
         # Given
-        user = User.objects.create(name='test')
-        article = Article.objects.create(title='test_title')
+        user = User.objects.create(name="test")
+        article = Article.objects.create(title="test_title")
 
         # Expect
         do_like(user.id, article.id)
@@ -47,3 +48,37 @@ class TestLikeService(TestCase):
         # Expect
         with self.assertRaises(IntegrityError):
             do_like(user.id, invalid_article_id)
+
+    def test_like_count_should_increase(self) -> None:
+        # Given
+        user = User.objects.create(name="test")
+        article = Article.objects.create(title="test_title")
+
+        # When
+        do_like(user.id, article.id)
+
+        # Then
+        article = Article.objects.get(id=article.id)
+        self.assertEqual(1, article.like_set.count())
+
+    def test_a_use_can_undo_like(self) -> None:
+        # Given
+        user = User.objects.create(name='test')
+        article = Article.objects.create(title='test_title')
+
+        # When
+        undo_like(user.id, article.id)
+
+        # Then
+        with self.assertRaises(Like.DoesNotExist):
+            Like.objects.filter(id=like.id).get()
+
+    def test_it_should_raise_an_exception_when_undo_like_which_does_not_exist(self) -> None:
+        # Given
+        user = User.objects.create(name='test')
+        article = Article.objects.create(title='test_title')
+
+        # Expect
+        with self.assertRaises(Like.DoesNotExist):
+            undo_like(user.id, article.id)
+
