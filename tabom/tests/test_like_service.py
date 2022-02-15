@@ -65,6 +65,7 @@ class TestLikeService(TestCase):
         # Given
         user = User.objects.create(name='test')
         article = Article.objects.create(title='test_title')
+        like = do_like(user_id=user.id, article_id=article.id)
 
         # When
         undo_like(user.id, article.id)
