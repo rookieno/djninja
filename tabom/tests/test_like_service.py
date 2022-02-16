@@ -63,8 +63,8 @@ class TestLikeService(TestCase):
 
     def test_a_use_can_undo_like(self) -> None:
         # Given
-        user = User.objects.create(name='test')
-        article = Article.objects.create(title='test_title')
+        user = User.objects.create(name="test")
+        article = Article.objects.create(title="test_title")
         like = do_like(user_id=user.id, article_id=article.id)
 
         # When
@@ -76,10 +76,9 @@ class TestLikeService(TestCase):
 
     def test_it_should_raise_an_exception_when_undo_like_which_does_not_exist(self) -> None:
         # Given
-        user = User.objects.create(name='test')
-        article = Article.objects.create(title='test_title')
+        user = User.objects.create(name="test")
+        article = Article.objects.create(title="test_title")
 
         # Expect
         with self.assertRaises(Like.DoesNotExist):
             undo_like(user.id, article.id)
-
