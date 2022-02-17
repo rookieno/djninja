@@ -12,5 +12,5 @@ def get_article_list(offset: int, limit: int) -> QuerySet[Article]:
     return Article.objects.order_by("-id")[offset : offset + limit]
 
 
-def get_article_page(page: int, limit: int) -> Page:
-    return Paginator(Article.objects.order_by("-id"), limit).page(page)
+# def get_article_page(page: int, limit: int) -> Page:
+#     return Paginator(Article.objects.order_by("-id"), limit).page(page)

@@ -1,9 +1,11 @@
 from django.test import TestCase
+from django.test.utils import CaptureQueriesContext
+from django.db import connection
 
 from tabom.models.article import Article
 from tabom.models.user import User
-from tabom.services.article_service import (get_an_article, get_article_list,
-                                            get_article_page)
+from tabom.services.article_service import (get_an_article, get_article_list)
+                                            # get_article_page)
 from tabom.services.like_service import do_like
 
 
@@ -34,30 +36,33 @@ class TestArticleService(TestCase):
         articles = [Article.objects.create(title=f"{i}") for i in range(1, 21)]
         do_like(user.id, articles[-1].id)
 
-        # Wgen
-        result_articles = get_article_list(0, 10)
+        with CaptureQueriesContext(connection) as ctx:
 
-        # Then
-        self.assertEqual(len(result_articles), 10)
-        self.assertEqual(1, result_articles[0].like_set.count())
-        self.assertEqual(
-            [a.id for a in reversed(articles[10:21])],
-            [a.id for a in result_articles],
-        )
+            # Wgen
+            result_articles = get_article_list(0, 10)
+            result_count = [a.like_set.count() for a in result_articles]
 
-    def test_get_article_page_should_prefetch_like(self) -> None:
-        # Given
-        user = User.objects.create(name="test_user")
-        articles = [Article.objects.create(title=f"{i}") for i in range(1, 21)]
-        do_like(user.id, articles[-1].id)
+            # Then
+            self.assertEqual(len(result_articles), 10)
+            self.assertEqual(1, result_count[0])
+            self.assertEqual(
+                [a.id for a in reversed(articles[10:21])],
+                [a.id for a in result_articles],
+            )
 
-        # Wgen
-        result_articles = get_article_page(1, 10)
-
-        # Then
-        self.assertEqual(len(result_articles), 10)
-        self.assertEqual(1, result_articles[0].like_set.count())
-        self.assertEqual(
-            [a.id for a in reversed(articles[10:21])],
-            [a.id for a in result_articles],
-        )
+    # def test_get_article_page_should_prefetch_like(self) -> None:
+    #     # Given
+    #     user = User.objects.create(name="test_user")
+    #     articles = [Article.objects.create(title=f"{i}") for i in range(1, 21)]
+    #     do_like(user.id, articles[-1].id)
+    #
+    #     # Wgen
+    #     result_articles = get_article_page(1, 10)
+    #
+    #     # Then
+    #     self.assertEqual(len(result_articles), 10)
+    #     self.assertEqual(1, result_articles[0].like_set.count())
+    #     self.assertEqual(
+    #         [a.id for a in reversed(articles[10:21])],
+    #         [a.id for a in result_articles],
+    #     )
