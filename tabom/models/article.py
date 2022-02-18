@@ -1,5 +1,4 @@
 from django.db import models
-
 from tabom.models.base_model import BaseModel
 
 
