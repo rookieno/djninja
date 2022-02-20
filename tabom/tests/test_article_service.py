@@ -1,11 +1,11 @@
+from django.db import connection
 from django.test import TestCase
 from django.test.utils import CaptureQueriesContext
-from django.db import connection
 
 from tabom.models.article import Article
 from tabom.models.user import User
-from tabom.services.article_service import (get_an_article, get_article_list)
-                                            # get_article_page)
+from tabom.services.article_service import get_an_article, get_article_list
+# get_article_page)
 from tabom.services.like_service import do_like
 
 
@@ -36,9 +36,8 @@ class TestArticleService(TestCase):
         articles = [Article.objects.create(title=f"{i}") for i in range(1, 21)]
         do_like(user.id, articles[-1].id)
 
-        with CaptureQueriesContext(connection) as ctx:
-
-            # Wgen
+        # Wgen
+        with self.assertNumQueries(2):
             result_articles = get_article_list(0, 10)
             result_count = [a.like_set.count() for a in result_articles]
 

@@ -9,7 +9,7 @@ def get_an_article(article_id: int) -> Article:
 
 
 def get_article_list(offset: int, limit: int) -> QuerySet[Article]:
-    return Article.objects.order_by("-id")[offset : offset + limit]
+    return Article.objects.order_by("-id").prefetch_related("like_set")[offset : offset + limit]
 
 
 # def get_article_page(page: int, limit: int) -> Page:
