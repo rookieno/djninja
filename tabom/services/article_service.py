@@ -22,5 +22,10 @@ def get_article_list(user_id: int, offset: int, limit: int) -> QuerySet[Article]
 def delete_an_article(article_id: int) -> None:
     Article.objects.filter(id=article_id).delete()
 
+
+def create_an_article(title: str) -> Article:
+    return Article.objects.create(title=title)
+
+
 # def get_article_page(page: int, limit: int) -> Page:
 #     return Paginator(Article.objects.order_by("-id"), limit).page(page)
