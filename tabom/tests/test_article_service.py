@@ -2,7 +2,7 @@ from django.test import TestCase
 
 from tabom.models import Like, User
 from tabom.models.article import Article
-from tabom.services.article_service import get_an_article, get_article_list
+from tabom.services.article_service import get_an_article, get_article_list, delete_an_article
 from tabom.services.like_service import do_like
 
 
@@ -74,3 +74,16 @@ class TestArticleService(TestCase):
         # Then
         self.assertEqual(0, len(articles[1].my_likes))
         self.assertEqual(0, len(articles[0].my_likes))
+
+    def test_you_can_delete_an_article(self) -> None:
+        # Given
+        user = User.objects.create(name="user1")
+        article = Article.objects.create(title="artice1")
+        like = do_like(user.id, article.id)
+
+        # When
+        delete_an_article(article.id)
+
+        # Then
+        self.assertFalse(Article.objects.filter(id=article.id).exists())
+        self.assertFalse(Like.objects.filter(id=like.id).exists())
