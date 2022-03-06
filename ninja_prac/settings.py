@@ -14,7 +14,7 @@ import json
 import os
 from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-from typing import List
+from typing import Any, Dict, List, Tuple
 
 import pymysql
 from django.core.exceptions import ImproperlyConfigured
@@ -31,8 +31,7 @@ with open(secret_file) as f:
     secrets = json.loads(f.read())
 
 
-def get_secret(setting, secrets=secrets):
-    """비밀 변수를 가져오거나 명시적 예외를 반환한다."""
+def get_secret(setting: Any, secrets: Any = secrets) -> Any:
     try:
         return secrets[setting]
     except KeyError:

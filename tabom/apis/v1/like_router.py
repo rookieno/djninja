@@ -8,13 +8,13 @@ from tabom.apis.v1.schemas.like_response import LikeResponse
 from tabom.models import Like
 from tabom.services.like_service import do_like, undo_like
 
-router = Router()
+router = Router(tags=["Likes"])
 
 
 @router.post("/", response={201: LikeResponse})
 def post_like(request: HttpRequest, like_request: LikeRequest) -> Tuple[int, Like]:
     like = do_like(like_request.user_id, like_request.article_id)
-    return 201, like
+    return 201, like  # 두개 리턴하면 튜플로 된다
 
 
 @router.delete("/", response={204: None})
